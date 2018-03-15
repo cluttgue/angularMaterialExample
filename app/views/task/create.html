@@ -1,0 +1,137 @@
+<div ng-controller="CreateTaskController" ng-init='init()'>
+    <div class="container">
+        <form name="taskForm" novalidate ng-submit="taskForm.$valid">
+            <div class="card" style="margin-top:50px">
+                    <div class="card-header bg-white">
+                            <h5 class="text-uppercase text-center">Crear nueva Tarea</h5>
+                        </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <md-input-container class="md-block">
+                                <label>Descripción de Tarea</label>
+                                <input md-maxlength="30" required md-no-asterisk name="descripcionTarea" ng-model="task.descripcionTarea">
+                                <div ng-messages="taskForm.descripcionTarea.$error">
+                                    <div ng-message="required">Debe ingresar una descripción de tarea</div>
+                                    <div ng-message="md-maxlength">La descripción debe tener al menos 30 caracteres</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div class="col-sm">
+                            <md-input-container class="md-block">
+                                <label>Canal</label>
+                                <md-select name="canalaSelect" ng-model="task.canal" ng-change="canalSelected()" required>
+                                    <md-option ng-value="canal" ng-repeat="canal in canales">{{canal.COD_CANAL}}</md-option>
+                                </md-select>
+                                <div ng-messages="taskForm.canalaSelect.$error">
+                                    <div ng-message-exp="['required']" ng-hide="taskForm.canalaSelect.$valid">
+                                        <span translate>Seleccione un canal</span>
+                                    </div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div class="col-sm">
+                            <md-input-container>
+                                <label>Fecha Hora Agenda</label>
+                                <input mdc-datetime-picker="" date="true" time="true" type="text" id="datetime" placeholder="Fecha hora" show-todays-date="" minutes="true" min-date="date" show-icon="true" ng-model="task.fechaHora" class="dtp-no-msclear dtp-input md-input" name="fechaHora" format="MM-DD-YYYY HH:mm" required>
+                                <div ng-messages="taskForm.fechaHora.$error">
+                                    <div ng-message="required">Debe seleccionar una fecha y hora</div>
+                                    <div ng-message="md-maxlength">La descripción debe tener al menos 30 caracteres</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <md-input-container class="md-block">
+                                <label>Remitente</label>
+                              <!--   <input ng-model="task.remitente" name="remitente" required>
+                                <div ng-messages="taskForm.remitente.$error">
+                                    <div ng-message="required">Debe ingresar un remitente</div>
+                                </div> -->
+                                <md-select name="remitenteSelect" ng-model="task.remitenteSelect" required>
+                                    <md-option ng-value="remitente" ng-repeat="remitente in remitente">[{{remitente.IdRemitente}}] {{remitente.Remitente}}</md-option>
+                                </md-select>
+                                <div ng-messages="taskForm.remitenteSelect.$error">
+                                    <div ng-message-exp="['required']" ng-hide="taskForm.remitenteSelect.$valid">
+                                        <span translate>Seleccione un remitente</span>
+                                    </div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div class="col-sm">
+                            <md-input-container class="md-block">
+                                <label>Campaña</label>
+                                <md-select name="campanaSelect" ng-model="task.selectedCampanas" ng-change="campanaSelected()" required>
+                                    <md-option ng-value="campana" ng-repeat="campana in campanas">[{{campana.ID_CAMPANA}}] {{campana.NOM_CAMPANA}}</md-option>
+                                </md-select>
+                                <div ng-messages="taskForm.campanaSelect.$error">
+                                    <div ng-message-exp="['required']" ng-hide="taskForm.campanaSelect.$valid">
+                                        <span translate>Seleccione una campaña</span>
+                                    </div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div class="col-sm">
+                            <md-input-container class="md-block">
+                                <label>Plantilla mensaje</label>
+                                <textarea ng-model="task.plantillaMsje" name="plantillaMsje" required></textarea>
+                                 <div ng-messages="taskForm.plantillaMsje.$error">
+                                    <div ng-message="required">Debe ingresar la plantilla del mensaje</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <md-input-container class="md-block">
+                                <label>Ejecución campaña</label>
+                                <md-select name="ejecucionVigenteSelected" ng-model="task.selectedEjecucionVigenteCampana" ng-change="ejecucionVigenteSelected()" required>
+                                    <md-option ng-value="ejecucionVigente" ng-repeat="ejecucionVigente in ejecucionVigente">{{ejecucionVigente.OBSERVACIONES}}</md-option>
+                                </md-select>
+                                <div ng-messages="taskForm.ejecucionVigenteSelected.$error">
+                                    <div ng-message-exp="['required']" ng-hide="taskForm.ejecucionVigenteSelected.$valid">
+                                        <span translate>Seleccione una ejecución de campaña vigente</span>
+                                    </div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div class="col-sm">
+                            <md-input-container class="md-block">
+                                <label>Busca respuesta</label>
+                                <md-select name="buscaRespuestaSelected" ng-model="task.buscaRespuesta" required>
+                                    <md-option ng-value="respuesta" ng-repeat="respuesta in respuestas">{{respuesta.name}}</md-option>
+                                </md-select>
+                                <div ng-messages="taskForm.buscaRespuestaSelected.$error">
+                                    <div ng-message-exp="['required']" ng-hide="taskForm.buscaRespuestaSelected.$valid">
+                                        <span translate>Seleccione si se debe realizar busqueda de respuesta</span>
+                                    </div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div class="col-sm">
+                            <md-input-container class="md-block">
+                                <label>Fecha inicio campaña</label>
+                                <input ng-model="task.fInicioCampania" disabled>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm">
+                            <md-input-container class="md-block" class="col-sm" -gt-xs>
+                                <label>Fecha fin campaña</label>
+                                <input ng-model="task.fFinCampania" disabled>
+                            </md-input-container>
+                        </div>
+                        <md-input-container class="col-sm"="40">
+                            <label>#Solicitudes disparo</label>
+                            <input ng-model="task.numSolDisparos" disabled>
+                        </md-input-container>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-right">
+                    <md-button type="submit" class="md-raised md-primary" ng-click="save()">Submit</md-button>
+                </div>
+            </div>
+        </form>
+    </div>
